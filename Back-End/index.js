@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import userRoutes from "./routes/users.js";
+import cookieParser from "cookie-parser";
 dotenv.config();
 
 import express from "express";
@@ -10,11 +12,11 @@ import cors from "cors";
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 const DB_URL = process.env.atlas_URL;
-console.log("PORT:", process.env.PORT);
-console.log("DB_URL:", process.env.atlas_URL);
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
 app.use("/api/auth", authRoutes);
-// app.use("/api/users", userRoutes);
+app.use("/api/users", userRoutes);
 // app.use("/api/content", contentRoutes);
 
 app.use((err, req, res, next) => {

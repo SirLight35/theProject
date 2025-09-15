@@ -1,6 +1,8 @@
 import express from "express";
-
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import User from "../models/Users.js";
+import cookie from "cookie";
 import { body, validationResult } from "express-validator";
 const router = express.Router();
 
@@ -36,6 +38,45 @@ router.post(
   }
 );
 
-// router.post("/login", async());
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid Email" });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid password" });
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_REFRESH_TOKEN,
+      { expiresIn: "7d" }
+    );
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.status(200).json({
+      message: "login succefull",
+      token,
+      user: {
+        id: user._id,
+        userName: user.userName,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 export default router;
