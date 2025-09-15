@@ -2,7 +2,6 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/Users.js";
-import cookie from "cookie";
 import { body, validationResult } from "express-validator";
 const router = express.Router();
 
@@ -79,4 +78,32 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/refresh", (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken)
+    return res.status(401).json({ message: "No token provided" });
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN);
+    const newAccessToken = jwt.sign(
+      { id: decoded.id },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
+    res.json({ token: newAccessToken });
+  } catch (error) {
+    res.status(401).json({ message: "Invalid or expired refresh token" });
+  }
+});
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+  res.status(200).json({ message: "logged out successfully" });
+});
 export default router;
