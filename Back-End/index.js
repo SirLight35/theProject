@@ -1,16 +1,18 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import authRoutes from "./routes/auth.js";
+import cors from "cors";
 // import userRoutes from "./routes/users.js";
 // import contentRoutes from "./routes/content.js  ";
 
-dotenv.config();
 const app = express();
 app.use(express.json());
-
 const DB_URL = process.env.atlas_URL;
-const PORT = process.env.PORT;
+console.log("PORT:", process.env.PORT);
+console.log("DB_URL:", process.env.atlas_URL);
 app.use("/api/auth", authRoutes);
 // app.use("/api/users", userRoutes);
 // app.use("/api/content", contentRoutes);
@@ -28,4 +30,8 @@ mongoose
   .then(() => console.log("✅ Connected to MongoDB Atlas"))
   .catch((err) => console.error("❌ Failed to connect:", err));
 
-app.listen(5050, () => console.log(`🚀 App listening on port 5050`));
+const PORT = parseInt(process.env.PORT) || 5051;
+
+app.listen(PORT, "0.0.0.0", () =>
+  console.log(`🚀 App listening on port ${PORT}`)
+);
