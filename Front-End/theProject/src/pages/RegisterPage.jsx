@@ -1,14 +1,25 @@
 import RegisterForm from "../components/RegisterForm";
 import { registerUser } from "../api/auth";
-export default function RegisterPage() {
-  const handleRegister = async (data) => {
-    try {
-      await registerUser(data);
-      alert("Registeration Successfull");
-    } catch (error) {
-      console.error(error);
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-      alert("Failed To Register");
+export default function RegisterPage() {
+  const { login } = useAuth(); // ✅ hooks at the top
+  const navigate = useNavigate(); // ✅ hooks at the top
+
+  const handleRegister = async (data) => {
+    console.log("🚀 Sending register payload:", data);
+
+    try {
+      const response = await registerUser(data);
+      console.log("✅ Backend response:", response);
+
+      // response has { message, token, user }
+      login(response); // ✅ your AuthContext expects both token & user inside
+      navigate("/"); // ✅ this now actually works
+    } catch (error) {
+      console.error("❌ Registration error:", error);
+      alert(error.message || "Failed To Register");
     }
   };
 

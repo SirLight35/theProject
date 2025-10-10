@@ -1,15 +1,33 @@
 import LoginForm from "../components/LoginForm";
 import { loginUser } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
   const handleLogin = async (data) => {
     try {
-      await loginUser(data);
-      alert("Login Successfull");
-    } catch (error) {
-      console.error(error);
+      const res = await loginUser(data);
 
-      alert("Failed To Login");
+      if (!res || !res.token || !res.user) {
+        alert("Invalid login response");
+        return;
+      }
+
+      login({ token: res.token, user: res.user });
+
+      if (res.user.role === "student") {
+        navigate("/studen/home");
+      } else if (res.user.role === "educator") {
+        navigate("/educator/home");
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("Failed to login");
     }
   };
 

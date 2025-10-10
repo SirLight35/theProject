@@ -4,12 +4,14 @@ import "./index.css";
 import App from "./App.jsx";
 import PublicNavbar from "./components/Navbar/PublicNavbar.jsx";
 import { BrowserRouter } from "react-router-dom";
-
+import { AuthProvider } from "./context/AuthContext.jsx";
+import Navbar from "./components/Navbar/Navbar.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <PublicNavbar />
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>
 );

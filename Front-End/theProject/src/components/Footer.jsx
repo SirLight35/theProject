@@ -1,6 +1,9 @@
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-10">
+    <footer
+      id="footer"
+      className="bg-gray-900 text-gray-300 py-4 w-full  bottom-0 left-0 text-center"
+    >
       <div className="container mx-auto px-6 grid md:grid-cols-2 gap-8">
         <div id="about" className="scroll-mt-20">
           <h2 className="text-2xl font-bold text-white mb-4">About Us</h2>

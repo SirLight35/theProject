@@ -1,25 +1,55 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { registerUser } from "../api/auth";
+import { useNavigate } from "react-router-dom";
 
-export default function SignUpForm({ onSubmit }) {
+export default function SignUpForm() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     userName: "",
     email: "",
     password: "",
     confirmPassword: "",
+    role: "student",
   });
+
   const [error, setError] = useState("");
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
+
     setError("");
-    onSubmit(formData);
+
+    const payload = {
+      userName: formData.userName,
+      email: formData.email,
+      password: formData.password,
+      role: formData.role.toLowerCase(),
+    };
+
+    try {
+      console.log("Register payload:", payload);
+
+      const data = await registerUser(payload);
+
+      login({ user: data.user, token: data.token });
+
+      localStorage.setItem("token", data.token);
+
+      navigate("/");
+    } catch (err) {
+      console.error("Registration error:", err);
+      setError(err.message || "Registration failed");
+    }
   };
 
   return (
@@ -66,6 +96,15 @@ export default function SignUpForm({ onSubmit }) {
           className="w-full mb-3 p-2 border rounded"
           required
         />
+        <select
+          name="role"
+          value={formData.role}
+          onChange={handleChange}
+          className="mb-10 bg-gray-200 p-2 rounded"
+        >
+          <option value="student">Student</option>
+          <option value="educator">Educator</option>
+        </select>
 
         {error && <p className="text-red-600 mb-2">{error}</p>}
 

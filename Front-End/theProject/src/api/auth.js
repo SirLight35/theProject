@@ -1,14 +1,22 @@
 export async function registerUser(payload) {
-  const res = await fetch("http://localhost:5051/api/auth/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const res = await fetch("http://localhost:5051/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-  if (!res.ok) {
-    throw new Error("Registeration Failed");
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const message =
+        data?.message || `Request failed with status ${res.status}`;
+      throw new Error(message);
+    }
+    return data;
+  } catch (error) {
+    console.error("Register user error:", error.message);
+    throw error;
   }
-  return res.json();
 }
 
 export async function loginUser(payload) {

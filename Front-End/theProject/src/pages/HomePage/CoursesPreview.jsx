@@ -36,7 +36,7 @@ export default function CoursesPreview() {
     },
   ];
   return (
-    <sectioni id="course" className="py-20 bg-gray-50">
+    <section id="course" className="py-20 bg-gray-50">
       <div className="container mx-auto px-6">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
           popular <span className="text-blue-600">Courses</span>
@@ -82,6 +82,6 @@ export default function CoursesPreview() {
           </a>
         </div>
       </div>
-    </sectioni>
+    </section>
   );
 }

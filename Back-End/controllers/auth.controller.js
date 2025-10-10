@@ -6,23 +6,41 @@ export const registerUser = async (req, res, next) => {
   try {
     const userExist = await User.findOne({ email });
     if (userExist) {
-      return res.status(400).json({ message: "User already exist" });
+      return res.status(400).json({ message: "User already exists" });
     }
-    const user = await User.create({ userName, email, password, role });
+    console.log("Incoming register request:", req.body);
+    const user = await User.create({
+      userName,
+      email,
+      password,
+      role: role?.toLowerCase(),
+    });
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
     res.status(201).json({
-      message: "User created Succefully",
+      message: "User created successfully",
+      token,
       user: {
         id: user._id,
         userName: user.userName,
         email: user.email,
+        role: user.role,
         createdAt: user.createdAt,
       },
     });
   } catch (error) {
-    next(error);
+    console.error("❌ Registration error details:", error);
+    res.status(400).json({
+      message: error.message || "Something went wrong",
+      error,
+    });
   }
 };
-
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
