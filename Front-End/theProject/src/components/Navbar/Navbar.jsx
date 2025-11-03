@@ -39,7 +39,9 @@ export default function Navbar() {
         ) : user.role === "student" ? (
           <>
             <Link to="/student/home">Home</Link>
+            <Link to="/student/courses/all">All Courses</Link>
             <Link to="/student/courses">My Courses</Link>
+            <Link to="/student/profile">Profile</Link>
             <button onClick={logout}>Logout</button>
           </>
         ) : user.role === "educator" ? (
@@ -47,6 +49,7 @@ export default function Navbar() {
             <Link to="/educator/home">Home</Link>
             <Link to="/educator/dashboard">Dashboard</Link>
             <Link to="/courses/create">Create Courses</Link>
+            <Link to="/educator/profile">Profile</Link>
             <button onClick={logout}>Logout</button>
           </>
         ) : null}

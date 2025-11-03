@@ -12,6 +12,6 @@ export const registerUserDto = [
     .withMessage("password must be at least 6 characters"),
   body("role")
     .optional()
-    .isIn(["admin", "educator", "student"])
+    .isIn(["educator", "student"])
     .withMessage("Role must be admin,instructor,or student"),
 ];

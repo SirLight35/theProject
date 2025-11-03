@@ -19,7 +19,7 @@ export default function LoginPage() {
       login({ token: res.token, user: res.user });
 
       if (res.user.role === "student") {
-        navigate("/studen/home");
+        navigate("/student/home");
       } else if (res.user.role === "educator") {
         navigate("/educator/home");
       } else {
