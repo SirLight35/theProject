@@ -3,7 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { fetchWithAuth } from "../../api/fetchWithAuth";
 import CourseCard from "../../components/student/CourseCard";
 import { useNavigate } from "react-router-dom";
-
+import { enrollInCourse } from "../../api/student";
 export default function StudentHome() {
   const { user } = useAuth();
   const token = user?.token;
@@ -76,11 +76,7 @@ export default function StudentHome() {
 
   const handleEnroll = async (courseId) => {
     try {
-      await fetchWithAuth(
-        `/api/student/enroll/${courseId}`,
-        { method: "POST" },
-        token
-      );
+      enrollInCourse(courseId, token);
       alert("Enrolled successfully!");
       window.location.reload();
     } catch (error) {
